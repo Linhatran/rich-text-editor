@@ -42,14 +42,22 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
 
     this.state = { editorState: EditorState.createEmpty() };
   }
-  handleChange(e: EditorState) {
-    this.setState({ editorState: e });
+  handleChange(editorState: EditorState) {
+    this.setState({ editorState });
   }
-  handleKeyCommand(cmd: string): DraftHandleValue {
-    return RichUtils.handleKeyCommand(this.state.editorState, cmd)
-      ? 'handled'
-      : 'not-handled';
-  }
+
+  handleKeyCommand = (
+    command: string,
+    editorState: EditorState,
+  ) => {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+
+    if (newState) {
+      this.handleChange(newState);
+      return 'handled';
+    }
+    return 'not-handled';
+  };
   handleBoldClick() {
     this.handleChange(
       RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD')
