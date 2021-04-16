@@ -4,9 +4,11 @@ import RichTextEditor from './RichTextEditor';
 
 function App() {
   return (
-    <div className="App">
-      <div className='App-header'>Your awesome text editor!</div>
-      <RichTextEditor/>
+    <div className='App'>
+      <div className='App-header rounded-top'>Your awesome text editor!</div>
+      <div >
+        <RichTextEditor />
+      </div>
     </div>
   );
 }
