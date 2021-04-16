@@ -1,4 +1,4 @@
-Link to view the project: 
+Link to view the project: `https://awesome-text-editor.herokuapp.com/`
 
 To start the app:
 
