@@ -7,11 +7,9 @@ import {
   RichUtils,
 } from 'draft-js';
 
-
 interface RichTextEditorProps {}
 
 class RichTextEditor extends React.Component<RichTextEditorProps, any> {
- 
   constructor(props: RichTextEditorProps) {
     super(props);
 
@@ -119,6 +117,7 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
       });
     }
   }
+
   render() {
     return (
       <>
@@ -143,11 +142,14 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
         <button className='btn btn-sm add-link' onClick={this.handleAddLink}>
           Link
         </button>
+
         <div className='border'>
           <Editor
             editorState={this.state.editorState}
             onChange={(e) => this.handleChange(e)}
             handleKeyCommand={this.handleKeyCommand}
+            handlePastedText={() => 'handled' || true} // prevent default pasting behavior
+            placeholder='enter text here...'
           />
         </div>
       </>
@@ -184,4 +186,5 @@ const Link = (props: any) => {
     </a>
   );
 };
+
 export default RichTextEditor;
