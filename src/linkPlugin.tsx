@@ -25,3 +25,15 @@ export const Link = (props) => {
     </a>
   );
 };
+export default function addLinkPlugin () {
+    keyBindingFn(e, {getEditorState}) {
+        const editorState = getEditorState();
+        const selection = editorState.getSelection();
+        if (selection.isCollapse()) {
+            return
+        }
+        if (KeyBindingUtil.hasCommandModifier(e) && e.keyCode === 75) {
+            return 'add-link'
+        }
+    }
+}
