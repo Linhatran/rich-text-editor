@@ -55,10 +55,9 @@ const addLinkPlugin = {
     const contentWithEntity = content.createEntity('LINK', 'MUTABLE', {
       url: link,
     });
-    const newEditorState = EditorState.push(
+    const newEditorState = EditorState.set(
       editorState,
-      contentWithEntity,
-      'create-entity'
+      {currentContent: contentWithEntity}
     );
     const entityKey = contentWithEntity.getLastCreatedEntityKey();
     setEditorState(RichUtils.toggleLink(newEditorState, selection, entityKey));
