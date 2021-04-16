@@ -6,38 +6,10 @@ import {
   EditorState,
   RichUtils,
 } from 'draft-js';
-import linkPlugin from './linkPlugin';
+
 
 interface RichTextEditorProps {}
-const getLinkEntities = (
-  contentBlock: any,
-  callback: any,
-  contentState: any
-) => {
-  contentBlock.findEntityRanges((character: any) => {
-    const entityKey = character.getEntity();
-    return (
-      entityKey !== null &&
-      contentState.getEntity(entityKey).getType() === 'LINK'
-    );
-  }, callback);
-};
 
-const Link = (props: any) => {
-  const { contentState, entityKey } = props;
-  const { url } = contentState.getEntity(entityKey).getData();
-  return (
-    <a
-      className='link'
-      href={url}
-      rel='noopener noreferrer'
-      target='#'
-      aria-label={url}
-    >
-      {props.children}
-    </a>
-  );
-};
 class RichTextEditor extends React.Component<RichTextEditorProps, any> {
  
   constructor(props: RichTextEditorProps) {
@@ -47,7 +19,7 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
       { strategy: getLinkEntities, component: Link },
     ]);
     this.state = {
-      editorState: EditorState.createEmpty(),
+      editorState: EditorState.createEmpty(decorator),
       isUrlVisible: false,
       url: '',
     };
@@ -105,46 +77,26 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
     );
   }
   handleAddLink() {
-    // const { editorState } = this.state;
-    // const selection = editorState.getSelection();
-    // const link = window.prompt('Paste link to nagivate to...');
-    // if (link === '') {
-    //   this.handleChange(RichUtils.toggleLink(editorState, selection, null));
-    //   return 'handled';
-    // }
-    // const content = editorState.getCurrentContent();
-    // const contentWithEntity = content.createEntity('LINK', 'MUTABLE', {
-    //   url: link,
-    // });
-    // const newEditorState = EditorState.set(editorState, {
-    //   currentContent: contentWithEntity,
-    // });
-    // const entityKey = contentWithEntity.getLastCreatedEntityKey();
-    // this.handleChange(
-    //   RichUtils.toggleLink(newEditorState, selection, entityKey)
-    // );
-    // console.log(newEditorState);
-    // return 'handled';
-    const { editorState, urlValue } = this.state;
-    const contentState = editorState.getCurrentContent();
-    const contentStateWithEntity = contentState.createEntity(
-      'LINK',
-      'MUTABLE',
-      { url: urlValue }
-    );
-    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+    const { editorState } = this.state;
+    const selection = editorState.getSelection();
+    const link = window.prompt('Paste link to nagivate to...');
+    if (link === '') {
+      this.handleChange(RichUtils.toggleLink(editorState, selection, null));
+      return 'handled';
+    }
+    const content = editorState.getCurrentContent();
+    const contentWithEntity = content.createEntity('LINK', 'MUTABLE', {
+      url: link,
+    });
     const newEditorState = EditorState.set(editorState, {
-      currentContent: contentStateWithEntity,
+      currentContent: contentWithEntity,
     });
-    this.setState({
-      editorState: RichUtils.toggleLink(
-        newEditorState,
-        newEditorState.getSelection(),
-        entityKey
-      ),
-      showURLInput: false,
-      urlValue: '',
-    });
+    const entityKey = contentWithEntity.getLastCreatedEntityKey();
+    this.handleChange(
+      RichUtils.toggleLink(newEditorState, selection, entityKey)
+    );
+    console.log(newEditorState);
+    return 'handled';
   }
 
   promptLink() {
@@ -189,7 +141,7 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
         <button className='btn btn-sm' onClick={this.handleOrderedList}>
           OL
         </button>
-        <button className='btn btn-sm' onClick={this.handleAddLink}>
+        <button className='btn btn-sm add-link' onClick={this.handleAddLink}>
           Link
         </button>
         <div className='border'>
@@ -203,4 +155,34 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
     );
   }
 }
+
+const getLinkEntities = (
+  contentBlock: any,
+  callback: any,
+  contentState: any
+) => {
+  contentBlock.findEntityRanges((character: any) => {
+    const entityKey = character.getEntity();
+    return (
+      entityKey !== null &&
+      contentState.getEntity(entityKey).getType() === 'LINK'
+    );
+  }, callback);
+};
+
+const Link = (props: any) => {
+  const { contentState, entityKey } = props;
+  const { url } = contentState.getEntity(entityKey).getData();
+  return (
+    <a
+      className='link'
+      href={url}
+      rel='noopener noreferrer'
+      target='#'
+      aria-label={url}
+    >
+      {props.children}
+    </a>
+  );
+};
 export default RichTextEditor;
