@@ -1,5 +1,5 @@
 import React from 'react';
-import { DraftHandleValue, Editor, EditorState, RichUtils } from 'draft-js';
+import { DraftHandleValue, Editor, EditorState, RichUtils, KeyBindingUtil } from 'draft-js';
 
 interface RichTextEditorProps {}
 
