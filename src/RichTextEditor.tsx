@@ -1,20 +1,24 @@
 import React from 'react';
-import { DraftHandleValue, Editor, EditorState, RichUtils, KeyBindingUtil } from 'draft-js';
+import { DraftHandleValue, Editor, EditorState, RichUtils } from 'draft-js';
+import linkPlugin from './linkPlugin';
 
 interface RichTextEditorProps {}
 
 class RichTextEditor extends React.Component<RichTextEditorProps, any> {
+  plugins: { keyBindingFn(e: any, { getEditorState }: any): "add-link" | undefined; handleKeyCommand(cmd: string, editorState: EditorState, { setEditorState }: any): "handled" | "not-handled"; decorators: {  }[]; }[];
   constructor(props: RichTextEditorProps) {
     super(props);
 
     this.state = { editorState: EditorState.createEmpty() };
+    this.plugins = [linkPlugin];
+
     this.handleBoldClick = this.handleBoldClick.bind(this);
     this.handleItalicClick = this.handleItalicClick.bind(this);
     this.handleUnderlineClick = this.handleUnderlineClick.bind(this);
     this.handleCodeFormat = this.handleCodeFormat.bind(this);
     this.handleUnorderedList = this.handleUnorderedList.bind(this);
     this.handleOrderedList = this.handleOrderedList.bind(this);
-
+    this.handleAddLink = this.handleAddLink.bind(this);
   }
   handleChange = (editorState: EditorState) => this.setState({ editorState });
 
@@ -59,6 +63,29 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
     this.handleChange(
       RichUtils.toggleBlockType(this.state.editorState, 'ordered-list-item')
     );
+  }
+  handleAddLink() {
+    const { editorState } = this.state;
+    const selection = editorState.getSelection();
+    const link = window.prompt('Paste link to nagivate to...');
+    if (link === '') {
+      this.handleChange(RichUtils.toggleLink(editorState, selection, null));
+      return 'handled';
+    }
+    const content = editorState.getCurrentContent();
+    const contentWithEntity = content.createEntity('LINK', 'MUTABLE', {
+      url: link,
+    });
+    const newEditorState = EditorState.push(
+      editorState,
+      contentWithEntity,
+      'create-entity'
+    );
+    const entityKey = contentWithEntity.getLastCreatedEntityKey();
+    this.handleChange(
+      RichUtils.toggleLink(newEditorState, selection, entityKey)
+    );
+    return 'handled';
   }
 
   render() {

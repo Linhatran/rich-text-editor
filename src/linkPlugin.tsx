@@ -45,7 +45,7 @@ const addLinkPlugin = {
     if (cmd !== 'add-link') {
       return 'not-handled';
     }
-    let link = window.prompt('Paste link to nagivate to...');
+    const link = window.prompt('Paste link to nagivate to...');
     const selection = editorState.getSelection();
     if (link === '') {
       setEditorState(RichUtils.toggleLink(editorState, selection, null));
