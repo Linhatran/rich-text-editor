@@ -11,6 +11,9 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
     this.handleBoldClick = this.handleBoldClick.bind(this);
     this.handleItalicClick = this.handleItalicClick.bind(this);
     this.handleUnderlineClick = this.handleUnderlineClick.bind(this);
+    this.handleCodeFormat = this.handleCodeFormat.bind(this);
+    this.handleUnorderedList = this.handleUnorderedList.bind(this);
+    this.handleOrderedList = this.handleOrderedList.bind(this);
 
   }
   handleChange = (editorState: EditorState) => this.setState({ editorState });
@@ -42,6 +45,21 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
       RichUtils.toggleInlineStyle(this.state.editorState, 'UNDERLINE')
     );
   }
+  handleCodeFormat() {
+    this.handleChange(
+      RichUtils.toggleInlineStyle(this.state.editorState, 'CODE')
+    );
+  }
+  handleUnorderedList() {
+    this.handleChange(
+      RichUtils.toggleBlockType(this.state.editorState, 'unordered-list-item')
+    );
+  }
+  handleOrderedList() {
+    this.handleChange(
+      RichUtils.toggleBlockType(this.state.editorState, 'ordered-list-item')
+    );
+  }
 
   render() {
     return (
@@ -55,12 +73,15 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
         <button className='btn btn-sm' onClick={this.handleUnderlineClick}>
           U
         </button>
-        {/* <button className='btn btn-sm' onClick={this.handleCode}>
+        <button className='btn btn-sm' onClick={this.handleCodeFormat}>
           Code
         </button>
-        <button className='btn btn-sm' onClick={this.handleBulletPoints}>
-          List
-        </button> */}
+        <button className='btn btn-sm' onClick={this.handleUnorderedList}>
+          UL
+        </button>
+        <button className='btn btn-sm' onClick={this.handleOrderedList}>
+          OL
+        </button>
         <div className='border'>
           <Editor
             editorState={this.state.editorState}
