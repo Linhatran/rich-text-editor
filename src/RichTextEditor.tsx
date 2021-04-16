@@ -95,7 +95,6 @@ class RichTextEditor extends React.Component<RichTextEditorProps, any> {
     this.handleChange(
       RichUtils.toggleLink(newEditorState, selection, entityKey)
     );
-    console.log(newEditorState);
     return 'handled';
   }
 
@@ -175,11 +174,11 @@ const Link = (props: any) => {
   const { url } = contentState.getEntity(entityKey).getData();
   return (
     <a
-      className='link'
+      style={{ color: 'blue', fontStyle: 'italic', cursor: 'pointer' }}
       href={url}
-      rel='noopener noreferrer'
-      target='#'
-      aria-label={url}
+      target='_blank'
+      rel='noreferrer'
+      onClick={() => window.open(url, '_blank')}
     >
       {props.children}
     </a>
