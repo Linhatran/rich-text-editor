@@ -9,9 +9,12 @@ import {
 import './App.css';
 interface RichTextEditorProps {}
 interface RichTextEditorState {
-    editorState: EditorState
+  editorState: EditorState;
 }
-class RichTextEditor extends React.Component<RichTextEditorProps, RichTextEditorState> {
+class RichTextEditor extends React.Component<
+  RichTextEditorProps,
+  RichTextEditorState
+> {
   constructor(props: RichTextEditorProps) {
     super(props);
 
@@ -193,13 +196,13 @@ class RichTextEditor extends React.Component<RichTextEditorProps, RichTextEditor
             </svg>
           </button>
         </div>
-        <div className='editor rounded-bottom'>
+        <div className='editor rounded-bottom' data-testid='editor'>
           <Editor
             editorState={this.state.editorState}
             onChange={(e) => this.handleChange(e)}
             handleKeyCommand={this.handleKeyCommand}
             handlePastedText={() => 'handled' || true} // prevent default pasting behavior
-            placeholder='enter text below...'
+            placeholder='enter text below ...'
           />
         </div>
       </>
@@ -226,6 +229,7 @@ const Link = (props: any) => {
   const { url } = contentState.getEntity(entityKey).getData();
   return (
     <a
+      data-testid='anchor-link'
       className='App-link'
       href={url}
       target='_blank'
