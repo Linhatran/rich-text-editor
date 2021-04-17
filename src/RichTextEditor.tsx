@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
   convertToRaw,
   EditorState,
@@ -14,17 +14,21 @@ import 'firebase/database';
 interface RichTextEditorProps {}
 interface RichTextEditorState {
   editorState: EditorState;
-  currentNotes: Object[];
+ currentNotes: Object[]
 }
 interface Test extends React.HTMLAttributes<HTMLDivElement> {
-  'data-testid'?: string;
+  dataTestid?: string;
 }
 const getHtml = (editorState: EditorState) =>
   draftToHtml(convertToRaw(editorState.getCurrentContent()));
-class RichTextEditor extends React.Component<
+class RichTextEditor extends Component<
   RichTextEditorProps,
   RichTextEditorState
 > {
+  setState(arg0: { editorState: EditorState; }) {
+    throw new Error('Method not implemented.');
+  }
+  state: any;
   constructor(props: RichTextEditorProps) {
     super(props);
 
@@ -66,7 +70,7 @@ class RichTextEditor extends React.Component<
         currentNotes.push({ id, ...notes[id] });
       }
       console.log(currentNotes);
-      this.setState({ currentNotes });
+      this.setState({currentNotes});
     });
   };
   render() {
@@ -91,16 +95,12 @@ class RichTextEditor extends React.Component<
             </div>
             <button
               className='btn btn-warning btn-lg mt-3 text-left'
-              data-toggle='modal'
-              data-target='#saveModal'
               onClick={this.saveNote}
             >
               Save
             </button>
             <button
               className='btn btn-success btn-lg mt-3 ml-2'
-              data-toggle='modal'
-              data-target='#saveModal'
               onClick={this.handlePastedText}
             >
               Handle pasted text
