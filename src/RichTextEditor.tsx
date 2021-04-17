@@ -16,6 +16,9 @@ interface RichTextEditorState {
   editorState: EditorState;
   currentNotes: Object[];
 }
+interface Test extends React.HTMLAttributes<HTMLDivElement> {
+  'data-testid'?: string;
+}
 const getHtml = (editorState: EditorState) =>
   draftToHtml(convertToRaw(editorState.getCurrentContent()));
 class RichTextEditor extends React.Component<
