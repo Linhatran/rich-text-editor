@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  CompositeDecorator,
   convertToRaw,
   EditorState,
 
@@ -21,12 +20,8 @@ class RichTextEditor extends React.Component<
 > {
   constructor(props: RichTextEditorProps) {
     super(props);
-
-    const decorator = new CompositeDecorator([
-      { strategy: getLinkEntities, component: Link },
-    ]);
     this.state = {
-      editorState: EditorState.createEmpty(decorator),
+      editorState: EditorState.createEmpty(),
       text:''
     };
   }
@@ -55,7 +50,7 @@ class RichTextEditor extends React.Component<
           {getHtml(this.state.editorState)}{' '}
         </div>
         <button
-          className='btn btn-warning btn-lg'
+          className='btn btn-warning btn-lg mt-3'
           data-toggle='modal'
           data-target='#previewModal'
         >
@@ -66,35 +61,7 @@ class RichTextEditor extends React.Component<
   }
 }
 
-const getLinkEntities = (
-  contentBlock: any,
-  callback: any,
-  contentState: any
-) => {
-  contentBlock.findEntityRanges((character: any) => {
-    const entityKey = character.getEntity();
-    return (
-      entityKey !== null &&
-      contentState.getEntity(entityKey).getType() === 'LINK'
-    );
-  }, callback);
-};
 
-const Link = (props: any) => {
-  const { contentState, entityKey } = props;
-  const { url } = contentState.getEntity(entityKey).getData();
-  return (
-    <a
-      data-testid='anchor-link'
-      className='App-link'
-      href={url}
-      target='_blank'
-      rel='noreferrer'
-      onClick={() => window.open(url, '_blank')}
-    >
-      {props.children}
-    </a>
-  );
-};
+
 
 export default RichTextEditor;
