@@ -1,7 +1,13 @@
 import React from 'react';
-import { convertToRaw, EditorState } from 'draft-js';
+import {
+  convertToRaw,
+  EditorState,
+  convertFromHTML,
+  ContentState,
+} from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
+import { stateFromHTML } from 'draft-js-import-html';
 import './App.css';
 import firebase from './utils/firebase';
 import 'firebase/database';
@@ -23,6 +29,7 @@ class RichTextEditor extends React.Component<
       editorState: EditorState.createEmpty(),
       currentNotes: [],
     };
+    this.handlePastedText = this.handlePastedText.bind(this)
   }
   handleChange = (editorState: EditorState) => {
     this.setState({ editorState });
@@ -34,6 +41,15 @@ class RichTextEditor extends React.Component<
     };
     noteRefs.push(note);
   };
+  handlePastedText = () => {
+    const contentBlocks = convertFromHTML(
+      convertToRaw(this.state.editorState.getCurrentContent()).blocks[0].text
+    );
+    const contentState = ContentState.createFromBlockArray(
+      contentBlocks.contentBlocks
+    );
+    this.setState({ editorState: EditorState.createWithContent(contentState) });
+  };
   componentDidMount = () => {
     const noteRefs = firebase.database().ref('notes');
     noteRefs.on('value', (snapshot) => {
@@ -43,7 +59,6 @@ class RichTextEditor extends React.Component<
         currentNotes.push(notes[note]);
       }
       this.setState({ currentNotes });
-      console.log(notes);
     });
   };
   render() {
@@ -56,7 +71,6 @@ class RichTextEditor extends React.Component<
             wrapperClassName='wrapper-class'
             editorClassName='editor-class'
             toolbarClassName='toolbar-class'
-            handlePastedText={() => false}
           />
         </div>
 
@@ -73,6 +87,14 @@ class RichTextEditor extends React.Component<
               onClick={this.saveNote}
             >
               Save
+            </button>
+            <button
+              className='btn btn-success btn-lg mt-3 ml-2'
+              data-toggle='modal'
+              data-target='#saveModal'
+              onClick={this.handlePastedText}
+            >
+              Handle pasted text
             </button>
           </div>
           <div className='col-5'>
