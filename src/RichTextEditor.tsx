@@ -50,18 +50,24 @@ class RichTextEditor extends React.Component<
     );
     this.setState({ editorState: EditorState.createWithContent(contentState) });
   };
+  handleDeleteNote = (id: string) => {
+    const noteRefs = firebase.database().ref('notes').child(id);
+    noteRefs.remove();
+  };
   componentDidMount = () => {
     const noteRefs = firebase.database().ref('notes');
     noteRefs.on('value', (snapshot) => {
       const notes = snapshot.val();
       const currentNotes: Object[] = [];
-      for (let note in notes) {
-        currentNotes.push(notes[note]);
+      for (let id in notes) {
+        currentNotes.push({ id, ...notes[id] });
       }
+      console.log(currentNotes);
       this.setState({ currentNotes });
     });
   };
   render() {
+    console.log(this.state.currentNotes);
     return (
       <>
         <div className='editor rounded-bottom' data-testid='editor'>
@@ -100,7 +106,9 @@ class RichTextEditor extends React.Component<
           <div className='col-5'>
             <h4 className='mt-4 mb-3'>Current notes</h4>
             {this.state.currentNotes.map((note) => (
-              <div className='rounded col-12 bg-light mb-3'>{note.text}</div>
+              <div className='rounded col-12 bg-light mb-3'>
+                <p>{note.text}</p>
+              </div>
             ))}
           </div>
         </div>
