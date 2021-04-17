@@ -7,6 +7,8 @@ import {
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import './App.css';
+import Modal from './Modal';
+
 interface RichTextEditorProps {}
 interface RichTextEditorState {
   editorState: EditorState;
@@ -52,10 +54,11 @@ class RichTextEditor extends React.Component<
         <button
           className='btn btn-warning btn-lg mt-3'
           data-toggle='modal'
-          data-target='#previewModal'
+          data-target='#saveModal'
         >
           Save
         </button>
+        
       </>
     );
   }
