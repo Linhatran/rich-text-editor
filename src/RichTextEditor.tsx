@@ -43,7 +43,7 @@ class RichTextEditor extends React.Component<
         currentNotes.push(notes[note]);
       }
       this.setState({ currentNotes });
-      console.log(currentNotes);
+      console.log(notes);
     });
   };
   render() {
@@ -56,6 +56,7 @@ class RichTextEditor extends React.Component<
             wrapperClassName='wrapper-class'
             editorClassName='editor-class'
             toolbarClassName='toolbar-class'
+            handlePastedText={() => false}
           />
         </div>
 
@@ -76,7 +77,9 @@ class RichTextEditor extends React.Component<
           </div>
           <div className='col-5'>
             <h4 className='mt-4 mb-3'>Current notes</h4>
-            <div className='html-view rounded col-12'></div>
+            {this.state.currentNotes.map((note) => (
+              <div className='rounded col-12 bg-light mb-3'>{note.text}</div>
+            ))}
           </div>
         </div>
       </>
