@@ -8,7 +8,8 @@ import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import './App.css';
 import Modal from './Modal';
-
+import Firebase from 'firebase';
+import config from '../config';
 interface RichTextEditorProps {}
 interface RichTextEditorState {
   editorState: EditorState;
@@ -22,6 +23,7 @@ class RichTextEditor extends React.Component<
 > {
   constructor(props: RichTextEditorProps) {
     super(props);
+    Firebase.initializeApp(config);
     this.state = {
       editorState: EditorState.createEmpty(),
       text:''
