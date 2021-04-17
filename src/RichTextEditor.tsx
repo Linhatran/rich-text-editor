@@ -3,13 +3,12 @@ import { convertToRaw, EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import './App.css';
-import Modal from './Modal';
 import firebase from './utils/firebase';
 import 'firebase/database';
 interface RichTextEditorProps {}
 interface RichTextEditorState {
   editorState: EditorState;
-  text: string;
+  currentNotes: Object[]
 }
 const getHtml = (editorState: EditorState) =>
   draftToHtml(convertToRaw(editorState.getCurrentContent()));
@@ -22,7 +21,7 @@ class RichTextEditor extends React.Component<
 
     this.state = {
       editorState: EditorState.createEmpty(),
-      text: '',
+      currentNotes: [],
     };
   }
   handleChange = (editorState: EditorState) => {
@@ -31,12 +30,17 @@ class RichTextEditor extends React.Component<
   saveNote = () => {
     const noteRefs = firebase.database().ref('notes');
     const note = {
-      text: this.state.text
+      text: getHtml(this.state.editorState),
     };
     noteRefs.push(note);
-    console.log('save');
   };
-
+  componentDidMount = () => {
+    const noteRefs = firebase.database().ref('notes');
+    noteRefs.on('value', (snapshot) => {
+      this.setState({currentNotes: snapshot.val()})
+    })
+     console.log(this.state.currentNotes);
+  };
   render() {
     return (
       <>
@@ -49,22 +53,28 @@ class RichTextEditor extends React.Component<
             toolbarClassName='toolbar-class'
           />
         </div>
-        <div className='col-12 col-md-6'>
-          {/* render a preview for the text in the editor */}
-          <div dangerouslySetInnerHTML={{ __html: this.state.text }} />
+
+        <div className='col-6'>
+          <h4 className='mt-4 mb-3'>HTML code</h4>
+          <div className='html-view rounded col-12'>
+            {getHtml(this.state.editorState)}
+          </div>
+          <button
+            className='btn btn-warning btn-lg mt-3 text-left'
+            data-toggle='modal'
+            data-target='#saveModal'
+            onClick={this.saveNote}
+          >
+            Save
+          </button>
         </div>
-        <h4 className='mt-4 mb-3'>HTML code</h4>{' '}
-        <div className='html-view rounded'>
-          {getHtml(this.state.editorState)}{' '}
+        <div className='col-6'>
+          <h4 className='mt-4 mb-3'>Current notes</h4>
+          <div className='html-view rounded col-12'>
+            
+          </div>
+          
         </div>
-        <button
-          className='btn btn-warning btn-lg mt-3'
-          data-toggle='modal'
-          data-target='#saveModal'
-          onClick={this.saveNote}
-        >
-          Save
-        </button>
       </>
     );
   }
