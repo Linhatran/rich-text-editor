@@ -1,21 +1,17 @@
 import React from 'react';
-import {
-  convertToRaw,
-  EditorState,
-
-} from 'draft-js';
+import { convertToRaw, EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import './App.css';
 import Modal from './Modal';
-import Firebase from 'firebase';
-import config from '../config';
+import firebase from './utils/firebase';
+import 'firebase/database';
 interface RichTextEditorProps {}
 interface RichTextEditorState {
   editorState: EditorState;
-  text:string
+  text: string;
 }
-const getHtml = (editorState:EditorState) =>
+const getHtml = (editorState: EditorState) =>
   draftToHtml(convertToRaw(editorState.getCurrentContent()));
 class RichTextEditor extends React.Component<
   RichTextEditorProps,
@@ -23,14 +19,22 @@ class RichTextEditor extends React.Component<
 > {
   constructor(props: RichTextEditorProps) {
     super(props);
-    Firebase.initializeApp(config);
+
     this.state = {
       editorState: EditorState.createEmpty(),
-      text:''
+      text: '',
     };
   }
   handleChange = (editorState: EditorState) => {
     this.setState({ editorState });
+  };
+  saveNote = () => {
+    const noteRefs = firebase.database().ref('notes');
+    const note = {
+      text: this.state.text
+    };
+    noteRefs.push(note);
+    console.log('save');
   };
 
   render() {
@@ -57,16 +61,13 @@ class RichTextEditor extends React.Component<
           className='btn btn-warning btn-lg mt-3'
           data-toggle='modal'
           data-target='#saveModal'
+          onClick={this.saveNote}
         >
           Save
         </button>
-        
       </>
     );
   }
 }
-
-
-
 
 export default RichTextEditor;
