@@ -7,10 +7,10 @@ import {
 } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
-import { stateFromHTML } from 'draft-js-import-html';
 import './App.css';
 import firebase from './utils/firebase';
 import 'firebase/database';
+
 interface RichTextEditorProps {}
 interface RichTextEditorState {
   editorState: EditorState;
@@ -29,7 +29,7 @@ class RichTextEditor extends React.Component<
       editorState: EditorState.createEmpty(),
       currentNotes: [],
     };
-    this.handlePastedText = this.handlePastedText.bind(this)
+    this.handlePastedText = this.handlePastedText.bind(this);
   }
   handleChange = (editorState: EditorState) => {
     this.setState({ editorState });
