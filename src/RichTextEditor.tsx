@@ -8,7 +8,7 @@ import 'firebase/database';
 interface RichTextEditorProps {}
 interface RichTextEditorState {
   editorState: EditorState;
-  currentNotes: Object[]
+  currentNotes: Object[];
 }
 const getHtml = (editorState: EditorState) =>
   draftToHtml(convertToRaw(editorState.getCurrentContent()));
@@ -37,9 +37,14 @@ class RichTextEditor extends React.Component<
   componentDidMount = () => {
     const noteRefs = firebase.database().ref('notes');
     noteRefs.on('value', (snapshot) => {
-      this.setState({currentNotes: snapshot.val()})
-    })
-     console.log(this.state.currentNotes);
+      const notes = snapshot.val();
+      const currentNotes: Object[] = [];
+      for (let note in notes) {
+        currentNotes.push(notes[note]);
+      }
+      this.setState({ currentNotes });
+      console.log(currentNotes);
+    });
   };
   render() {
     return (
@@ -54,26 +59,25 @@ class RichTextEditor extends React.Component<
           />
         </div>
 
-        <div className='col-6'>
-          <h4 className='mt-4 mb-3'>HTML code</h4>
-          <div className='html-view rounded col-12'>
-            {getHtml(this.state.editorState)}
+        <div className='d-flex justify-content-between'>
+          <div className='col-6'>
+            <h4 className='mt-4 mb-3'>HTML code</h4>
+            <div className='html-view rounded col-12'>
+              {getHtml(this.state.editorState)}
+            </div>
+            <button
+              className='btn btn-warning btn-lg mt-3 text-left'
+              data-toggle='modal'
+              data-target='#saveModal'
+              onClick={this.saveNote}
+            >
+              Save
+            </button>
           </div>
-          <button
-            className='btn btn-warning btn-lg mt-3 text-left'
-            data-toggle='modal'
-            data-target='#saveModal'
-            onClick={this.saveNote}
-          >
-            Save
-          </button>
-        </div>
-        <div className='col-6'>
-          <h4 className='mt-4 mb-3'>Current notes</h4>
-          <div className='html-view rounded col-12'>
-            
+          <div className='col-5'>
+            <h4 className='mt-4 mb-3'>Current notes</h4>
+            <div className='html-view rounded col-12'></div>
           </div>
-          
         </div>
       </>
     );
